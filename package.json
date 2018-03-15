@@ -1,0 +1,28 @@
+{
+  "name": "bqutil",
+  "version": "1.0.0",
+  "description": "A simple module for hitting Big Query from the command line as a service user. ",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JesseCastro/bqutil.git"
+  },
+  "keywords": [
+    "BQ",
+    "Big",
+    "Query"
+  ],
+  "author": "Jesse R. Castro <jesse.r.castro@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JesseCastro/bqutil/issues"
+  },
+  "homepage": "https://github.com/JesseCastro/bqutil#readme",
+  "dependencies": {
+    "@google-cloud/bigquery": "^1.0.0",
+    "@google-cloud/storage": "^1.6.0"
+  }
+}
