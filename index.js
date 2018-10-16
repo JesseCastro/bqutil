@@ -496,4 +496,107 @@ module.exports = {
         console.error('ERROR:', err);
       });
   },
+  /**
+   * Run a query synchronously.
+   */
+  syncQueryStd: function(sqlQuery, projectId) {
+    // Creates a client
+    const bigquery = new BigQuery({
+      projectId: projectId,
+    });
+
+    // Query options list: https://cloud.google.com/bigquery/docs/reference/v2/jobs/query
+    const options = {
+      query: sqlQuery,
+      timeoutMs: 10000, // Time out after 10 seconds.
+      useLegacySql: false, // Use standard SQL syntax for queries.
+    };
+
+    // Runs the query
+    bigquery
+      .query(options)
+      .then(results => {
+        const rows = results[0];
+        console.log('Rows:');
+        rows.forEach(row => console.log(row));
+      })
+      .catch(err => {
+        console.error('ERROR:', err);
+      });
+  },
+
+  /**
+   * Just a plain ol' query.
+   */
+  queryStd: function(sqlQuery, projectId,callback){
+    // Creates a client
+    const bigquery = new BigQuery({
+      projectId: projectId,
+    });
+
+    // Query options list: https://cloud.google.com/bigquery/docs/reference/v2/jobs/query
+    const options = {
+      query: sqlQuery,
+      timeoutMs: 10000, // Time out after 10 seconds.
+      useLegacySql: false, // Use standard SQL syntax for queries.
+    };
+
+    // Runs the query
+    bigquery
+      .query(options)
+      .then(callback)
+      .catch(err => {
+        console.error('ERROR:', err);
+      });
+  },
+
+  /**
+   * Run a query asynchronously.
+   */
+  asyncQueryStd: function(sqlQuery, projectId) {
+    // Creates a client
+    const bigquery = new BigQuery({
+      projectId: projectId,
+    });
+
+    // Query options list: https://cloud.google.com/bigquery/docs/reference/v2/jobs/query
+    const options = {
+      query: sqlQuery,
+      useLegacySql: false, // Use standard SQL syntax for queries.
+    };
+
+    let job;
+
+    // Runs the query as a job
+    bigquery
+      .createQueryJob(options)
+      .then(results => {
+        job = results[0];
+        console.log(`Job ${job.id} started.`);
+        return job.promise();
+      })
+      .then(() => {
+        // Get the job's status
+        return job.getMetadata();
+      })
+      .then(metadata => {
+        // Check the job's status for errors
+        const errors = metadata[0].status.errors;
+        if (errors && errors.length > 0) {
+          throw errors;
+        }
+      })
+      .then(() => {
+        console.log(`Job ${job.id} completed.`);
+        return job.getQueryResults();
+      })
+      .then(results => {
+        const rows = results[0];
+        console.log('Rows:');
+        rows.forEach(row => console.log(row));
+      })
+      .catch(err => {
+        console.error('ERROR:', err);
+      });
+  },
 }
