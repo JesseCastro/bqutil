@@ -615,7 +615,7 @@ module.exports = {
     const options = {
       query: sqlQuery,
       useLegacySql: legacy,
-      destinationTable: (bigquery.dataset(datasetId).table(destinationTable)),
+      destinationTable: destinationTable,
     };
 
     let job;

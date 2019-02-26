@@ -1,6 +1,6 @@
 {
   "name": "bqutil",
-  "version": "1.0.4",
+  "version": "1.1.2",
   "description": "A simple module for hitting Big Query from the command line as a service user. ",
   "main": "index.js",
   "scripts": {
