@@ -599,4 +599,57 @@ module.exports = {
         console.error('ERROR:', err);
       });
   },
+  /**
+   * Run a query asynchronously.
+   */
+  createTableFromQuery: function(sqlQuery, projectId, datasetId, destinationTable, legacy) {
+    if(legacy === undefined){
+      legacy = false;
+    }
+    // Creates a client
+    const bigquery = new BigQuery({
+      projectId: projectId,
+    });
+
+    // Query options list: https://cloud.google.com/bigquery/docs/reference/v2/jobs/query
+    const options = {
+      query: sqlQuery,
+      useLegacySql: legacy,
+      destinationTable: (bigquery.dataset(datasetId).table(destinationTable)),
+    };
+
+    let job;
+
+    // Runs the query as a job
+    bigquery
+      .createQueryJob(options)
+      .then(results => {
+        job = results[0];
+        console.log(`Job ${job.id} started.`);
+        return job.promise();
+      })
+      .then(() => {
+        // Get the job's status
+        return job.getMetadata();
+      })
+      .then(metadata => {
+        // Check the job's status for errors
+        const errors = metadata[0].status.errors;
+        if (errors && errors.length > 0) {
+          throw errors;
+        }
+      })
+      .then(() => {
+        console.log(`Job ${job.id} completed.`);
+        return job.getQueryResults();
+      })
+      .then(results => {
+        const rows = results[0];
+        console.log('Rows:');
+        rows.forEach(row => console.log(row));
+      })
+      .catch(err => {
+        console.error('ERROR:', err);
+      });
+  },
 }
